@@ -4,5 +4,6 @@
 python -m http.server &
 #for Linux use python3
 python3 -m http.server &
-mpremote mip install --target / http://localhost:8000/
+comport=`mpremote connect list | grep 2e8a:0005 | cut -d' ' -f1`
+mpremote connect $comport mip install --target / http://localhost:8000/
 pkill -f http.server
