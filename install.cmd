@@ -1,6 +1,8 @@
-start python -m http.server
+@echo off
 @rem Extract comport name where pico is connected
 for /f "tokens=1 delims= " %%a in ('python -m mpremote connect list ^| find "2e8a:0005"') do set comport=%%a
+echo Device: %comport%
+start python -m http.server
 @rem Run mpremote
 python -m mpremote connect %comport% mip install --target / http://localhost:8000/
 @rem The following line terminates all processes with "python" and "http.server" in them.
