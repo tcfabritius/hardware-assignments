@@ -11,15 +11,15 @@ by running **python --version** or **python3 --version**
 
 You also need to have mpremote installed. To install mpremote:
 
-- pip install mpremote
+- **pip install mpremote**
   
   or
   
-- python -m pip install mpremote
+- **python -m pip install mpremote**
 
 When the prerequisites are met then you can install the project and the libraries to your Pico.
 
-## Check out the repository
+## Check out the repository and install libraries
 
 git clone --recurse-submodules https://gitlab.metropolia.fi/lansk/pico-test.git
 
