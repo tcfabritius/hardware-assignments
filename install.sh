@@ -5,7 +5,9 @@ case "$(uname)" in
 
    Darwin*)
      #for OSX use python
-     if [ "$(which python3.12 2>/dev/null | wc -l)" -gt "0" ] ; then
+     if [ "$(which python3 2>/dev/null | wc -l)" -gt "0" ] ; then
+        python=python3
+	 elif [ "$(which python3.12 2>/dev/null | wc -l)" -gt "0" ] ; then
         python=python3.12
 	 else
         python=python
