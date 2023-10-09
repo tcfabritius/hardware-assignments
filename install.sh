@@ -27,9 +27,10 @@ case "$(uname)" in
      python=python3
      ;;
 esac
-echo Using $python
-$python -m http.server &
+echo Using: $python
 comport=`$python -m mpremote connect list | grep 2e8a:0005 | cut -d' ' -f1`
+echo Device: $comport
+$python -m http.server &
 $python -m mpremote connect $comport mip install --target / http://localhost:8000/
 kill $!
 #pkill -f http.server
