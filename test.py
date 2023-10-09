@@ -8,7 +8,7 @@ micropython.alloc_emergency_exception_buf(200)
 
 
 rb = fifo.Fifo(50)
-print('I am main.py')
+print('I am test.py')
 
 if rb.empty():
     print('Fifo is empty')
