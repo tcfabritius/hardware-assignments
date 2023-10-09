@@ -1,10 +1,13 @@
 #!/bin/bash
-# OSX and Linux have python3 with different names.
 
+# prevent MinGW to messing up path names
+export MSYS_NO_PATHCONV=1
+
+# OSX and Linux have python3 with different names.
 case "$(uname)" in
 
    Darwin*)
-     #for OSX use python
+     #for OSX try to figure out which python version to use
      if [ "$(which python3 2>/dev/null | wc -l)" -gt "0" ] ; then
         python=python3
      elif [ "$(which python3.12 2>/dev/null | wc -l)" -gt "0" ] ; then
