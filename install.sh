@@ -7,9 +7,9 @@ case "$(uname)" in
      #for OSX use python
      if [ "$(which python3 2>/dev/null | wc -l)" -gt "0" ] ; then
         python=python3
-	 elif [ "$(which python3.12 2>/dev/null | wc -l)" -gt "0" ] ; then
+     elif [ "$(which python3.12 2>/dev/null | wc -l)" -gt "0" ] ; then
         python=python3.12
-	 else
+     else
         python=python
      fi
      ;;
@@ -24,6 +24,7 @@ case "$(uname)" in
      python=python3
      ;;
 esac
+echo Using $python
 $python -m http.server &
 comport=`$python -m mpremote connect list | grep 2e8a:0005 | cut -d' ' -f1`
 $python -m mpremote connect $comport mip install --target / http://localhost:8000/
