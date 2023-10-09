@@ -1,11 +1,10 @@
-Check out the repository
+Check out the repository:
 
-Run webserver.cmd
+git clone --recurse-submodules https://gitlab.metropolia.fi/lansk/pico-test.git
 
-Start a terminal and run:
+Start a terminal, go to the pico-test directory and run:
 
-mpremote  mip install --target / http://localhost:8000/
+- **.\install.cmd** if you use Windows PowerShell or cmd
 
-or if your pico is not found automatically:
+- **./install.sh** if you use Linux, OSX or GitBash
 
-mpremote connect \<device\> mip install --target / http://localhost:8000/
