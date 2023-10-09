@@ -7,7 +7,7 @@ project.
 # To setup your Pico
 
 You need to have git installed. Make sure that you have python installed and that is in the path. You can verify this in terminal
-by running **python --version** or **python3 --version**
+by running **python --version** or **python3 --version**. If you see pyhton version then python is in the path.
 
 You also need to have mpremote installed. To install mpremote:
 
@@ -21,7 +21,9 @@ When the prerequisites are met then you can install the project and the librarie
 
 ## Check out the repository and install libraries
 
-git clone --recurse-submodules https://gitlab.metropolia.fi/lansk/pico-test.git
+Start a terminal, go to (use **cd** command) the directory where you want to copy the project to.
+
+<kbd>git clone --recurse-submodules https://gitlab.metropolia.fi/lansk/pico-test.git</kbd>
 
 Start a terminal, go to the pico-test directory and run:
 
