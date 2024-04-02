@@ -31,3 +31,19 @@ Go to the pico-test directory and run:
 
 - <kbd>./install.sh</kbd> if you use Linux, OSX or GitBash
 
+## Pull submodule updates
+
+When a submodule is added a commit id is stored to the repository where the module is set up. 
+If the submodule is updated the updates aren't automatically applied to the repository. To get the
+updates run:
+
+<kbd>git submodule update --recursive --remote</kbd>
+
+After this command you have the latest commit in your local copy of the submodule. 
+Note that if you do <kbd>git diff</kbd> right after update you see only one changed
+line. The line shows that submodule commit id has changed. 
+To apply the changes to your remote you must add the changed submodule 
+with <kbd>git add</kbd> and commit. After the commit you will see a different
+commit id next to the submodule when you view the remote repository in the browser.
+
+
