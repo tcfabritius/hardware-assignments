@@ -1,22 +1,34 @@
-import ssd1306
-import fifo
+from ssd1306 import SSD1306_I2C
+from machine import UART, Pin, I2C, Timer
 import time
-from machine import Pin
-
 import micropython
-micropython.alloc_emergency_exception_buf(200)
 
+ufoy=55
+ufox=1
 
-rb = fifo.Fifo(50)
-print('I am test.py')
+sw2 = Pin(7, Pin.IN, Pin.PULL_UP)
+sw0 = Pin(9, Pin.IN, Pin.PULL_UP)
+i2c = I2C(1, scl=Pin(15), sda=Pin(14), freq=400000)
+oled_width = 128
+oled_height = 64
+oled = SSD1306_I2C(oled_width, oled_height, i2c)
 
-if rb.empty():
-    print('Fifo is empty')
-
-led = Pin("LED", Pin.OUT)
-
+oled.fill(0)
+oled.text('<=>', ufox, ufoy, 1)
+oled.show()
 while True:
-    led.toggle()
-    time.sleep(1)
-
+    if sw0():
+        ufox = ufox + 1
+        if ufox > 127:
+            ufox = -5
+        oled.fill(0)
+        oled.text('<=>', ufox, ufoy, 1)
+        oled.show()
+    if sw2():
+        ufox = ufox - 1
+        if ufox < 0:
+            ufox = 132
+        oled.fill(0)
+        oled.text('<=>', ufox, ufoy, 1)
+        oled.show()
 
