@@ -18,16 +18,14 @@ oled.text('<=>', ufox, ufoy, 1)
 oled.show()
 while True:
     if sw0():
-        ufox = ufox + 1
-        if ufox > 127:
-            ufox = -5
+        if ufox < 105:
+            ufox = ufox + 1
         oled.fill(0)
         oled.text('<=>', ufox, ufoy, 1)
         oled.show()
     if sw2():
-        ufox = ufox - 1
-        if ufox < 0:
-            ufox = 132
+        if ufox > 0:
+            ufox = ufox - 1
         oled.fill(0)
         oled.text('<=>', ufox, ufoy, 1)
         oled.show()
