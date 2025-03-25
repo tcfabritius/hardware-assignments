@@ -1,21 +1,26 @@
-import ssd1306
-import fifo
+from ssd1306 import SSD1306_I2C
+from machine import Pin, I2C
 import time
-from machine import Pin
 
-import micropython
-micropython.alloc_emergency_exception_buf(200)
+i2c = I2C(1, scl=Pin(15), sda=Pin(14), freq=400000)
+oled = SSD1306_I2C(128, 64, i2c)
 
+yPos = 0  
+fontSize = 8
 
-rb = fifo.Fifo(50)
-print('I am test.py')
-
-if rb.empty():
-    print('Fifo is empty')
-
-led = Pin("LED", Pin.OUT)
+oled.fill(0)
+oled.show()
 
 while True:
-    led.toggle()
-    time.sleep(1)
+    givenInput = input("Type something will ya: ")
+    
+    if yPos + fontSize > 64:
+        oled.scroll(0, -fontSize)
+        oled.fill_rect(0, 54, 128, 10, 0)
+        yPos = 54
+    else:
+        yPos += fontSize
+
+    oled.text(givenInput, 0, yPos)
+    oled.show()
 
