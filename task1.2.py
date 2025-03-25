@@ -14,10 +14,10 @@ oled.show()
 while True:
     givenInput = input("Type something will ya: ")
     
-    if yPos + fontSize > 64:
+    if yPos + fontSize > 63:
         oled.scroll(0, -fontSize)
-        oled.fill_rect(0, 54, 128, 10, 0)
-        yPos = 54
+        oled.fill_rect(0, 56, 128, 8, 0)
+        yPos = 56
     else:
         yPos += fontSize
 
