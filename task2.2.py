@@ -1,26 +1,38 @@
-from ssd1306 import SSD1306_I2C
-from machine import Pin, I2C
+from filefifo import Filefifo
 import time
+import micropython
 
-i2c = I2C(1, scl=Pin(15), sda=Pin(14), freq=400000)
-oled = SSD1306_I2C(128, 64, i2c)
+data = Filefifo(10, name = 'capture_250Hz_02.txt')
 
-yPos = 0  
-fontSize = 8
+sampleFreq = 250
+sampleCount = 2*sampleFreq
 
-oled.fill(0)
-oled.show()
+minValue = data.get()
+maxValue = minValue
 
-while True:
-    givenInput = input("Type something will ya: ")
+for _ in range(sampleCount-1):
+    value = data.get()
     
-    if yPos + fontSize > 64:
-        oled.scroll(0, -fontSize)
-        oled.fill_rect(0, 54, 128, 10, 0)
-        yPos = 54
-    else:
-        yPos += fontSize
+    if value < minValue:
+        minValue = value
+        
+    if value > maxValue:
+        maxValue = value
 
-    oled.text(givenInput, 0, yPos)
-    oled.show()
+print('min value is: ', minValue)
+print('max value is: ', maxValue)
+
+total = 10*sampleFreq
+
+for _ in range(total):
+    value = data.get()
+    plotValue = (value-minValue)/(maxValue-minValue)*100
+    print(plotValue)
+
+        
+    
+    
+
+
+
 
