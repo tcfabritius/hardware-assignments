@@ -16,7 +16,7 @@ for x in range(2653):
         first_occurrence = True
     last = number
       
-lastindex = 0
+lastindex = peakindexes[0]
 intervalInNumberOfSamples = []
 for index in peakindexes:
     interval = index - lastindex
