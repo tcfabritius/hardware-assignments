@@ -4,7 +4,8 @@ import micropython
 from fifo import Fifo
 
 micropython.alloc_emergency_exception_buf(200)
-leds = [Pin(20, Pin.OUT), Pin(21, Pin.OUT), Pin(22, Pin.OUT)]
+#brightness = 4
+leds = [Pin(20, mode=Pin.OUT), Pin(21, mode=Pin.OUT), Pin(22, mode=Pin.OUT)]
 ledStates = [False, False, False]
 menuIndex = 0
 events = Fifo(30)
@@ -40,11 +41,11 @@ class Encoder:
 def updateMenu():
     print("\nMenu:")
     for i in range(3):
+        #leds[i].brightness(brightness)
         if i == menuIndex:
             selected = "->" 
         else:
             selected = " "
-        
         
         if ledStates[i]:
             status = "ON "     
