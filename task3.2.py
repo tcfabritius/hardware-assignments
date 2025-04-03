@@ -1,62 +1,81 @@
-from filefifo import Filefifo
 from machine import Pin
 import time
 import micropython
-micropython.alloc_emergency_exception_buf(200)
 from fifo import Fifo
 
-class Interrupt_button:
-    def __init__(self, button_pin, fifo):
-        self.button = Pin(button_pin, mode = Pin.IN, pull = Pin.PULL_UP)
-        self.nr = button_pin
-        self.fifo = fifo
-        self.button.irq(handler = self.handler, trigger = Pin.IRQ_FALLING, hard = True)
-
-    def handler(self, pin):
-        self.fifo.put(self.nr)
-
+micropython.alloc_emergency_exception_buf(200)
+leds = [Pin(20, Pin.OUT), Pin(21, Pin.OUT), Pin(22, Pin.OUT)]
+ledStates = [False, False, False]
+menuIndex = 0
 events = Fifo(30)
 
-sw0 = Interrupt_button(9, events)
-sw1 = Interrupt_button(8, events)
-sw2 = Interrupt_button(7, events)
+class InterruptButton:
+    def __init__(self, button_pin, fifo):
+        self.button = Pin(button_pin, mode=Pin.IN, pull=Pin.PULL_UP)
+        self.lastPress = time.ticks_ms()
+        self.fifo = fifo
+        self.button.irq(handler=self.handler, trigger=Pin.IRQ_FALLING, hard=True)
+    
+    def handler(self, pin):
+        now = time.ticks_ms()
+        if time.ticks_diff(now, self.lastPress) > 50: #50ms cooldown
+            self.lastPress = now
+            self.fifo.put(0)
+
+class Encoder:
+    def __init__(self, rot_a, rot_b, fifo):
+        self.a = Pin(rot_a, mode=Pin.IN)
+        self.b = Pin(rot_b, mode=Pin.IN)
+        self.fifo = fifo
+        self.a.irq(handler=self.handler, trigger=Pin.IRQ_RISING, hard=True)
+
+    def handler(self, pin):
+        if self.b.value():
+            #Left
+            self.fifo.put(-1)
+        else:
+            #Right
+            self.fifo.put(1)
+
+def updateMenu():
+    print("\nMenu:")
+    for i in range(3):
+        if i == menuIndex:
+            selected = "->" 
+        else:
+            selected = " "
+        
+        
+        if ledStates[i]:
+            status = "ON "     
+        else:
+            status = "OFF"
+        
+        
+        print(f"{selected} LED{i+1}: {status}")
+
+for i in range(3):
+    ledStates[i] = leds[i].value()
+
+rotFifo = Fifo(30)
+rot = Encoder(10, 11, rotFifo)
+button = InterruptButton(12, events)
+updateMenu()
 
 while True:
+    if rotFifo.has_data():
+        menuIndex = (menuIndex + rotFifo.get()) % 3
+        updateMenu()
+
     if events.has_data():
-        print(events.get())
-
-
-# class Button_handler:
-#     def __init__(self, indicator_led):
-#         self.led = Pin(indicator_led, Pin.OUT)
-#         self.count = 0
-# 
-#     def handler(self, pin):
-#         self.count += 1
-#         self.led.toggle()
-# 
-# button = Pin(9, mode = Pin.IN, pull = Pin.PULL_UP)
-# my_button = Button_handler(22)
-# 
-# button.irq(handler = my_button.handler, trigger = Pin.IRQ_FALLING, hard = True)
-# old = 0
-# 
-# while True:
-#     if old != my_button.count:
-#         old = my_button.count
-#         print("Button count:", old)
-
- 
-# button = Pin(9, mode = Pin.IN, pull = Pin.PULL_UP)
-# led = Pin("LED", Pin.OUT)
-# pressed = False
-# 
-# def button_handler(pin):
-#     led.toggle()
-#     
-# button.irq(handler = button_handler, trigger = button.IRQ_FALLING, hard = True)
-#     
-# while True:
-#     if pressed:
-#         pressed = True
-#         print ("Button was pressed.")
+        event = events.get()
+        if event == 0:
+            ledStates[menuIndex] = not ledStates[menuIndex]
+            leds[menuIndex].value(ledStates[menuIndex])
+            
+            if ledStates[menuIndex]:
+                print(f"Button pressed! LED{menuIndex+1} ON")
+            else:
+                print(f"Button pressed! LED{menuIndex+1} OFF")
+            
+            updateMenu()
