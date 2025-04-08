@@ -1,5 +1,6 @@
+from ssd1306 import SSD1306_I2C
 from led import Led
-from machine import Pin
+from machine import Pin, I2C
 import time
 import micropython
 from fifo import Fifo
@@ -10,6 +11,8 @@ leds = [Led(20, mode=Pin.OUT), Led(21, mode=Pin.OUT), Led(22, mode=Pin.OUT)]
 ledStates = [False, False, False]
 menuIndex = 0
 events = Fifo(30)
+i2c = I2C(1, scl=Pin(15), sda=Pin(14), freq=400000)
+oled = SSD1306_I2C(128, 64, i2c)
 
 class InterruptButton:
     def __init__(self, button_pin, fifo):
@@ -20,7 +23,7 @@ class InterruptButton:
     
     def handler(self, pin):
         now = time.ticks_ms()
-        if time.ticks_diff(now, self.lastPress) > 50: #50ms cooldown
+        if time.ticks_diff(now, self.lastPress) > 250: #50ms cooldown
             self.lastPress = now
             self.fifo.put(0)
 
@@ -40,33 +43,36 @@ class Encoder:
             self.fifo.put(1)
 
 def updateMenu():
+    oled.fill(0)
     print("\nMenu:")
     for i in range(3):
         leds[i].brightness(brightness)
         if i == menuIndex:
-            selected = "->" 
+            selected = "<3"
         else:
-            selected = " "
+            selected = "  "
         
         if ledStates[i]:
-            status = "ON "     
+            status = "ON"
         else:
             status = "OFF"
         
-        
-        print(f"{selected} LED{i+1}: {status}")
+        feed = f"{selected} LED{i+1}: {status}"
+        oled.text(feed, 1, i*10, 1)
+        oled.show()
 
 for i in range(3):
     ledStates[i] = leds[i].value()
 
-rotFifo = Fifo(30)
+rotFifo = Fifo(30, typecode='i')
 rot = Encoder(10, 11, rotFifo)
 button = InterruptButton(12, events)
 updateMenu()
 
-while True:
+while True:        
     if rotFifo.has_data():
-        menuIndex = (menuIndex + rotFifo.get()) % 3
+        while rotFifo.has_data():
+            menuIndex = (menuIndex + rotFifo.get()) % 3
         updateMenu()
 
     if events.has_data():
