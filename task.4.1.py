@@ -28,11 +28,11 @@ for x in range(45000):
         min = 99999999
         max = 0
 
-
 for x in range(45000):
     number = rb.get()
     if x < aver2range:
-        aver = averages[segmentid]
+        if segmentid < len(averages):
+            aver = averages[segmentid]
     else:
         aver2range = aver2range + 500
         if segmentid < len(averages):
