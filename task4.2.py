@@ -7,7 +7,7 @@ import micropython
 micropython.alloc_emergency_exception_buf(200)
 i2c = I2C(1, scl=Pin(15), sda=Pin(14), freq=400000)
 oled = SSD1306_I2C(128, 64, i2c)
-rb = Filefifo(50, name='capture_250Hz_02.txt')
+rb = Filefifo(50, name='capture02_250Hz.txt')
 
 def scaler(value, minVal, maxVal):
     if maxVal == minVal:
@@ -29,6 +29,8 @@ while True:
             count += 1
 
     oled.fill(0)
+    prevX = None
+    prevY = None
     x = 0
     sumVal = 0
     samples = 0
@@ -42,10 +44,14 @@ while True:
             if samples == 5:
                 avg = sumVal / 5
                 y = 63 - scaler(avg, minVal, maxVal)
-                oled.pixel(x, y, 1)
+                if prevX == None:
+                    prevX = x
+                    prevY = y
+                oled.line(x,y,prevX,prevY,1)
+                prevX = x
+                prevY = y
                 sumVal = 0
                 samples = 0
                 x += 1
-
     oled.show()
     time.sleep(0.1)
