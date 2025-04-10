@@ -8,6 +8,8 @@ micropython.alloc_emergency_exception_buf(200)
 i2c = I2C(1, scl=Pin(15), sda=Pin(14), freq=400000)
 oled = SSD1306_I2C(128, 64, i2c)
 rb = Filefifo(50, name='capture02_250Hz.txt')
+#rb = Fifo(50)
+#Interruption and filehandler to make it compatible with crowtail
 
 def scaler(value, minVal, maxVal):
     if maxVal == minVal:
